@@ -1,0 +1,32 @@
+/* Make parent relative for absolute positioning of flyout */
+.sidebar-main-item {
+    position: relative;
+}
+
+/* Ensure sidebar dropdown is above main content */
+.sidebar-flyout {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    min-width: 180px;
+    z-index: auto !important;
+    display: none;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    padding: 8px 0;
+    margin-top: 4px;
+    /* space below parent */
+}
+
+/* If your main content has overflow, remove or adjust it */
+.main-content {
+    overflow: visible !important;
+}
+
+/* Show dropdown on hover/focus */
+.sidebar-main-item:hover>.sidebar-flyout,
+.sidebar-main-item:focus-within>.sidebar-flyout {
+    display: block;
+}
