@@ -1547,6 +1547,511 @@ class AdminController extends Controller
         return view('admin.sub-components-report', compact('subComponents'));
     }
 
+    // Quality Checks - Indicator Performance Tracking
+    public function showIndicatorPerformance()
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        // Get indicator performance data from the database, ordered by newest first (indicator_id DESC)
+        $indicatorPerformances = DB::table('indication_profile')
+            ->orderBy('indicator_id', 'desc')
+            ->get();
+        
+        return view('admin.indicator-performance', compact('indicatorPerformances'));
+    }
+
+    public function showIndicatorPerformanceReview($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        // Get specific indicator performance record
+        $performance = DB::table('indication_profile')
+            ->where('indicator_id', $id)
+            ->first();
+
+        if (!$performance) {
+            return redirect()->route('admin.indicator-performance')
+                ->with('error', 'Record not found.');
+        }
+
+        return view('admin.indicator-performance-review', compact('performance'));
+    }
+
+    public function approveIndicatorPerformance($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        try {
+            // Update the status to approved
+            DB::table('indication_profile')
+                ->where('indicator_id', $id)
+                ->update(['status' => 'Approved']);
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function updateIndicatorPerformance(Request $request, $id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        $request->validate([
+            'year' => 'required',
+            'indicator_type' => 'required',
+            'description' => 'required',
+            'unit_measurement' => 'required',
+            'target' => 'required|numeric',
+            'quarter' => 'required',
+            'indicator_category' => 'required',
+            'baseline' => 'required|numeric',
+            'achieved' => 'required|numeric',
+            'achievement_percentage' => 'required|numeric',
+            'freq_data_collection' => 'required',
+            'status' => 'required|in:Pending,Approved,Rejected',
+        ]);
+
+        try {
+            DB::table('indication_profile')
+                ->where('indicator_id', $id)
+                ->update([
+                    'year' => $request->year,
+                    'proId' => $request->quarter,
+                    'indicator_desc' => $request->description,
+                    'indicatorId' => $request->indicator_type,
+                    'icat' => $request->indicator_category,
+                    'measuId' => $request->unit_measurement,
+                    'data' => $request->freq_data_collection,
+                    'baseline' => $request->baseline,
+                    'target' => $request->target,
+                    'acheived' => $request->achieved,
+                    'acheivement' => $request->achievement_percentage,
+                    'comment' => $request->breakdown_achieved,
+                    'commentAc' => $request->breakdown_plan,
+                    'rmk' => $request->remarks,
+                    'status' => $request->status,
+                ]);
+
+            return redirect()->route('admin.indicator-performance')
+                ->with('success', 'Record updated successfully.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error updating record: ' . $e->getMessage()]);
+        }
+    }
+
+    public function deleteIndicatorPerformance($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        try {
+            DB::table('indication_profile')
+                ->where('indicator_id', $id)
+                ->delete();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    // Beneficiary Performance Tracking Methods
+    public function showBeneficiaryPerformance()
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        // Get beneficiary performance data from the view with proper names, ordered by newest first
+        $beneficiaryPerformances = DB::table('beneficiary_profile_vw')
+            ->orderBy('profile_id', 'desc')
+            ->get();
+        
+        return view('admin.beneficiary-performance', compact('beneficiaryPerformances'));
+    }
+
+    public function showBeneficiaryPerformanceReview($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        // Get specific beneficiary performance record from the view
+        $performance = DB::table('beneficiary_profile_vw')
+            ->where('profile_id', $id)
+            ->first();
+
+        if (!$performance) {
+            return redirect()->route('admin.beneficiary-performance')
+                ->with('error', 'Record not found.');
+        }
+
+        return view('admin.beneficiary-performance-review', compact('performance'));
+    }
+
+    public function approveBeneficiaryPerformance($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        try {
+            DB::table('beneficiary_profile')
+                ->where('profile_id', $id)
+                ->update(['admstatus' => 'approve']);
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function rejectBeneficiaryPerformance($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        try {
+            DB::table('beneficiary_profile')
+                ->where('profile_id', $id)
+                ->update(['admstatus' => 'reject']);
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    // Disbursement Performance Methods
+    public function showDisbursementPerformance()
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+        
+        $disbursementPerformances = DB::table('disbursement_view')
+            ->orderBy('disburs_id', 'desc')
+            ->get();
+            
+        return view('admin.disbursement-performance', compact('disbursementPerformances'));
+    }
+
+    public function showDisbursementPerformanceReview($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+        
+        $performance = DB::table('disbursement_view')
+            ->where('disburs_id', $id)
+            ->first();
+            
+        if (!$performance) {
+            return redirect()->route('admin.disbursement-performance')
+                ->with('error', 'Record not found.');
+        }
+        
+        return view('admin.disbursement-performance-review', compact('performance'));
+    }
+
+    public function approveDisbursementPerformance($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        try {
+            DB::table('disbursement')
+                ->where('disburs_id', $id)
+                ->update(['admstatus' => 'approve']);
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function rejectDisbursementPerformance($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        try {
+            DB::table('disbursement')
+                ->where('disburs_id', $id)
+                ->update(['admstatus' => 'reject']);
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function updateDisbursementPerformance(Request $request, $id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        $request->validate([
+            'year' => 'required',
+            'quarter' => 'required',
+            'disburs_source' => 'required',
+            'comp_id' => 'required',
+            'subcomp' => 'required',
+            'querter_taeget' => 'required|numeric',
+            'actual' => 'required|numeric',
+            'commit' => 'required|numeric',
+            'perfor' => 'required|numeric',
+            'execu' => 'required|numeric',
+            'status' => 'required|in:Pending,Approved,Rejected',
+        ]);
+
+        try {
+            DB::table('disbursement')
+                ->where('disburs_id', $id)
+                ->update([
+                    'year' => $request->year,
+                    'quarter' => $request->quarter,
+                    'disburs_source' => $request->disburs_source,
+                    'comp_id' => $request->comp_id,
+                    'subcomp' => $request->subcomp,
+                    'querter_taeget' => $request->querter_taeget,
+                    'actual' => $request->actual,
+                    'commit' => $request->commit,
+                    'perfor' => $request->perfor,
+                    'execu' => $request->execu,
+                    'admstatus' => $request->status === 'Approved' ? 'approve' : ($request->status === 'Rejected' ? 'reject' : 'pending'),
+                ]);
+
+            return redirect()->route('admin.disbursement-performance')
+                ->with('success', 'Record updated successfully.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error updating record: ' . $e->getMessage()]);
+        }
+    }
+
+    public function deleteDisbursementPerformance($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        try {
+            DB::table('disbursement')
+                ->where('disburs_id', $id)
+                ->delete();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function updateBeneficiaryPerformance(Request $request, $id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        $request->validate([
+            'year' => 'required',
+            'quarter' => 'required',
+            'region' => 'required',
+            'activity' => 'required',
+            'intervention' => 'required',
+            'beneficiary' => 'required',
+            'pwd' => 'required|numeric',
+            'youth' => 'required|numeric',
+            'female' => 'required|numeric',
+            'total_ben' => 'required|numeric',
+            'town_village' => 'required',
+            'status' => 'required|in:Pending,Approved,Rejected',
+        ]);
+
+        try {
+            DB::table('beneficiary_profile')
+                ->where('profile_id', $id)
+                ->update([
+                    'year' => $request->year,
+                    'proId' => $request->quarter,
+                    'regId' => $request->region,
+                    'activity_id' => $request->activity,
+                    'comp' => $request->intervention,
+                    'benId' => $request->beneficiary,
+                    'npwd' => $request->pwd,
+                    'nyouth' => $request->youth,
+                    'female' => $request->female,
+                    'beneficiary_no' => $request->total_ben,
+                    'community' => $request->town_village,
+                    'admstatus' => $request->status === 'Approved' ? 'approve' : ($request->status === 'Rejected' ? 'reject' : 'pending'),
+                ]);
+
+            return redirect()->route('admin.beneficiary-performance')
+                ->with('success', 'Record updated successfully.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error updating record: ' . $e->getMessage()]);
+        }
+    }
+
+    public function deleteBeneficiaryPerformance($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        try {
+            DB::table('beneficiary_profile')
+                ->where('profile_id', $id)
+                ->delete();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    // Contract/MOU Performance Methods
+    public function showContractPerformance()
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        $contracts = DB::table('cperformance_vw')
+            ->orderBy('conId', 'desc')
+            ->get();
+
+        return view('admin.contract-performance', compact('contracts'));
+    }
+
+    public function showContractPerformanceReview($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        $contract = DB::table('cperformance_vw')
+            ->where('conId', $id)
+            ->first();
+
+        if (!$contract) {
+            return redirect()->route('admin.contract-performance')
+                ->with('error', 'Contract performance record not found.');
+        }
+
+        return view('admin.contract-performance-review', compact('contract'));
+    }
+
+    public function approveContractPerformance($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        try {
+            DB::table('contract_performance')
+                ->where('conId', $id)
+                ->update(['status' => 'Approved']);
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function rejectContractPerformance($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        try {
+            DB::table('contract_performance')
+                ->where('conId', $id)
+                ->update(['status' => 'Rejected']);
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function updateContractPerformance(Request $request, $id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        $request->validate([
+            'year' => 'required|numeric',
+            'proId' => 'required',
+            'compId' => 'required',
+            'subId' => 'required',
+            'actorId' => 'required',
+            'personId' => 'required',
+            'intervenId' => 'required',
+            'ctyId' => 'required',
+            'stuId' => 'required|numeric',
+            'name' => 'required',
+            'cost' => 'required|numeric',
+            'key_issue' => 'required',
+            'recommendation' => 'required',
+            'status' => 'required|in:Pending,Approved,Rejected',
+        ]);
+
+        try {
+            DB::table('contract_performance')
+                ->where('conId', $id)
+                ->update([
+                    'year' => $request->year,
+                    'proId' => $request->proId,
+                    'compId' => $request->compId,
+                    'subId' => $request->subId,
+                    'actorId' => $request->actorId,
+                    'personId' => $request->personId,
+                    'intervenId' => $request->intervenId,
+                    'ctyId' => $request->ctyId,
+                    'stuId' => $request->stuId,
+                    'name' => $request->name,
+                    'cost' => $request->cost,
+                    'key_issue' => $request->key_issue,
+                    'recommendation' => $request->recommendation,
+                    'status' => $request->status,
+                ]);
+
+            return redirect()->route('admin.contract-performance')
+                ->with('success', 'Contract performance updated successfully.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error updating contract performance: ' . $e->getMessage()]);
+        }
+    }
+
+    public function deleteContractPerformance($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        try {
+            DB::table('contract_performance')
+                ->where('conId', $id)
+                ->delete();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
     private function getDashboardStats()
     {
         $stats = [
@@ -1576,4 +2081,205 @@ class AdminController extends Controller
 
         return $stats;
     }
+
+    // Training Performance Methods
+    public function showTrainingPerformance()
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        try {
+            $trainings = DB::table('trainin_vw')->orderBy('train_Id', 'desc')->get();
+            return view('admin.training-performance', compact('trainings'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error loading training performance data: ' . $e->getMessage());
+        }
+    }
+
+    public function showTrainingPerformanceReview($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        try {
+            $training = DB::table('trainin_vw')->where('train_Id', $id)->first();
+            
+            if (!$training) {
+                return redirect()->route('admin.training-performance')->with('error', 'Training performance record not found.');
+            }
+            
+            return view('admin.training-performance-review', compact('training'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error loading training performance review: ' . $e->getMessage());
+        }
+    }
+
+    public function approveTrainingPerformance($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        try {
+            $training = DB::table('train')->where('train_Id', $id)->first();
+            
+            if (!$training) {
+                return redirect()->back()->with('error', 'Training performance record not found.');
+            }
+            
+            DB::table('train')->where('train_Id', $id)->update(['status' => 'Approved']);
+            
+            return redirect()->route('admin.training-performance')->with('success', 'Training performance record approved successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error approving training performance record: ' . $e->getMessage());
+        }
+    }
+
+    public function rejectTrainingPerformance($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        try {
+            $training = DB::table('train')->where('train_Id', $id)->first();
+            
+            if (!$training) {
+                return redirect()->back()->with('error', 'Training performance record not found.');
+            }
+            
+            DB::table('train')->where('train_Id', $id)->update(['status' => 'Rejected']);
+            
+            return redirect()->route('admin.training-performance')->with('success', 'Training performance record rejected successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error rejecting training performance record: ' . $e->getMessage());
+        }
+    }
+
+    public function updateTrainingPerformance(Request $request, $id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        $request->validate([
+            'year' => 'required|numeric',
+            'proId' => 'required',
+            'traId' => 'required',
+            'compId' => 'required',
+            'subId' => 'required',
+            'actorId' => 'required',
+            'personId' => 'required',
+            'venId' => 'required',
+            'train_desc' => 'required',
+            'cost' => 'required|numeric',
+            'total_target' => 'required|integer',
+            'total_acheived' => 'required|integer',
+            'key_issue' => 'nullable',
+            'recommendation' => 'nullable',
+            'rmk' => 'nullable',
+            'status' => 'required|in:Pending,Approved,Rejected',
+        ]);
+
+        try {
+            DB::table('train')
+                ->where('train_Id', $id)
+                ->update([
+                    'year' => $request->year,
+                    'proId' => $request->proId,
+                    'traId' => $request->traId,
+                    'compId' => $request->compId,
+                    'subId' => $request->subId,
+                    'actorId' => $request->actorId,
+                    'personId' => $request->personId,
+                    'venId' => $request->venId,
+                    'train_desc' => $request->train_desc,
+                    'cost' => $request->cost,
+                    'total_target' => $request->total_target,
+                    'total_acheived' => $request->total_acheived,
+                    'key_issue' => $request->key_issue,
+                    'recommendation' => $request->recommendation,
+                    'rmk' => $request->rmk,
+                    'status' => $request->status,
+                ]);
+
+            return redirect()->route('admin.training-performance')
+                ->with('success', 'Training performance updated successfully.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error updating training performance: ' . $e->getMessage()]);
+        }
+    }
+
+    public function deleteTrainingPerformance($id)
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        try {
+            DB::table('train')
+                ->where('train_Id', $id)
+                ->delete();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    // General Reports
+    public function showBeneficiariesNew()
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        $beneficiaries = DB::table('beneficiary_profile')
+            ->orderBy('profile_id', 'desc')
+            ->get();
+
+        return view('admin.beneficiaries-new', compact('beneficiaries'));
+    }
+
+    public function showIndicators()
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        $indicators = DB::table('indicator_profile_vw')
+            ->orderBy('indicator_id', 'desc')
+            ->get();
+
+        return view('admin.indicators', compact('indicators'));
+    }
+
+    public function showContracts()
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        $contracts = DB::table('cperformance_vw')
+            ->orderBy('conId', 'desc')
+            ->get();
+
+        return view('admin.contracts', compact('contracts'));
+    }
+
+    public function showTrainings()
+    {
+        if (!Session::has('admin_id')) {
+            return redirect()->route('admin.login');
+        }
+
+        $trainings = DB::table('trainin_vw')
+            ->orderBy('train_Id', 'desc')
+            ->get();
+
+        return view('admin.trainings', compact('trainings'));
+    }
+
 }

@@ -98,6 +98,54 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/beneficiary-types-report', [App\Http\Controllers\AdminController::class, 'showBeneficiaryTypesReport'])->name('beneficiary-types-report');
 
     // Contract Types Report
+    
+    // Quality Checks - Indicator Performance Tracking
+    Route::get('/indicator-performance', [App\Http\Controllers\AdminController::class, 'showIndicatorPerformance'])->name('indicator-performance');
+    Route::get('/indicator-performance/{id}/review', [App\Http\Controllers\AdminController::class, 'showIndicatorPerformanceReview'])->name('indicator-performance.review');
+    Route::post('/indicator-performance/{id}/approve', [App\Http\Controllers\AdminController::class, 'approveIndicatorPerformance'])->name('indicator-performance.approve');
+    Route::post('/indicator-performance/{id}/update', [App\Http\Controllers\AdminController::class, 'updateIndicatorPerformance'])->name('indicator-performance.update');
+    Route::post('/indicator-performance/{id}/delete', [App\Http\Controllers\AdminController::class, 'deleteIndicatorPerformance'])->name('indicator-performance.delete');
+
+    // Beneficiary Performance Tracking
+    Route::get('/beneficiary-performance', [App\Http\Controllers\AdminController::class, 'showBeneficiaryPerformance'])->name('beneficiary-performance');
+    Route::get('/beneficiary-performance/{id}/review', [App\Http\Controllers\AdminController::class, 'showBeneficiaryPerformanceReview'])->name('beneficiary-performance.review');
+    Route::post('/beneficiary-performance/{id}/approve', [App\Http\Controllers\AdminController::class, 'approveBeneficiaryPerformance'])->name('beneficiary-performance.approve');
+    Route::post('/beneficiary-performance/{id}/reject', [App\Http\Controllers\AdminController::class, 'rejectBeneficiaryPerformance'])->name('beneficiary-performance.reject');
+    Route::post('/beneficiary-performance/{id}/update', [App\Http\Controllers\AdminController::class, 'updateBeneficiaryPerformance'])->name('beneficiary-performance.update');
+    Route::post('/beneficiary-performance/{id}/delete', [App\Http\Controllers\AdminController::class, 'deleteBeneficiaryPerformance'])->name('beneficiary-performance.delete');
+
+    // Disbursement Performance Tracking
+    Route::get('/disbursement-performance', [App\Http\Controllers\AdminController::class, 'showDisbursementPerformance'])->name('disbursement-performance');
+    Route::get('/disbursement-performance/{id}/review', [App\Http\Controllers\AdminController::class, 'showDisbursementPerformanceReview'])->name('disbursement-performance.review');
+    Route::post('/disbursement-performance/{id}/approve', [App\Http\Controllers\AdminController::class, 'approveDisbursementPerformance'])->name('disbursement-performance.approve');
+    Route::post('/disbursement-performance/{id}/reject', [App\Http\Controllers\AdminController::class, 'rejectDisbursementPerformance'])->name('disbursement-performance.reject');
+    Route::post('/disbursement-performance/{id}/update', [App\Http\Controllers\AdminController::class, 'updateDisbursementPerformance'])->name('disbursement-performance.update');
+    Route::post('/disbursement-performance/{id}/delete', [App\Http\Controllers\AdminController::class, 'deleteDisbursementPerformance'])->name('disbursement-performance.delete');
+
+    // Contract/MOU Performance Tracking
+    Route::get('/contract-performance', [App\Http\Controllers\AdminController::class, 'showContractPerformance'])->name('contract-performance');
+    Route::get('/contract-performance/{id}/review', [App\Http\Controllers\AdminController::class, 'showContractPerformanceReview'])->name('contract-performance.review');
+    Route::post('/contract-performance/{id}/approve', [App\Http\Controllers\AdminController::class, 'approveContractPerformance'])->name('contract-performance.approve');
+    Route::post('/contract-performance/{id}/reject', [App\Http\Controllers\AdminController::class, 'rejectContractPerformance'])->name('contract-performance.reject');
+    Route::post('/contract-performance/{id}/update', [App\Http\Controllers\AdminController::class, 'updateContractPerformance'])->name('contract-performance.update');
+    Route::post('/contract-performance/{id}/delete', [App\Http\Controllers\AdminController::class, 'deleteContractPerformance'])->name('contract-performance.delete');
+
+// Training Performance Routes
+Route::get('/training-performance', [App\Http\Controllers\AdminController::class, 'showTrainingPerformance'])->name('training-performance');
+Route::get('/training-performance/{id}/review', [App\Http\Controllers\AdminController::class, 'showTrainingPerformanceReview'])->name('training-performance.review');
+Route::post('/training-performance/{id}/approve', [App\Http\Controllers\AdminController::class, 'approveTrainingPerformance'])->name('training-performance.approve');
+Route::post('/training-performance/{id}/reject', [App\Http\Controllers\AdminController::class, 'rejectTrainingPerformance'])->name('training-performance.reject');
+    Route::post('/training-performance/{id}/update', [App\Http\Controllers\AdminController::class, 'updateTrainingPerformance'])->name('training-performance.update');
+    Route::post('/training-performance/{id}/delete', [App\Http\Controllers\AdminController::class, 'deleteTrainingPerformance'])->name('training-performance.delete');
+
+    // General Reports
+    Route::get('/beneficiaries-new', [App\Http\Controllers\AdminController::class, 'showBeneficiariesNew'])->name('beneficiaries-new');
+    Route::get('/indicators', [App\Http\Controllers\AdminController::class, 'showIndicators'])->name('indicators');
+    Route::get('/contracts', [App\Http\Controllers\AdminController::class, 'showContracts'])->name('contracts');
+    Route::get('/trainings', [App\Http\Controllers\AdminController::class, 'showTrainings'])->name('trainings');
+
+// Public Analytics Route
+Route::get('/analytics', [App\Http\Controllers\PublicController::class, 'showAnalytics'])->name('public.analytics');
     Route::get('/contract-types-report', [App\Http\Controllers\AdminController::class, 'showContractTypesReport'])->name('contract-types-report');
 
     // Indicator Types Report

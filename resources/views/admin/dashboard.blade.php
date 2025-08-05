@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ROOTS Admin Dashboard</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{{ asset('images/roots-logo.png') }}" type="image/png">
+    <link rel="shortcut icon" href="{{ asset('images/roots-logo.png') }}" type="image/png">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
     <style>
         body {
             background: #f4f8fb;
@@ -19,16 +24,8 @@
         }
 
         .navbar-brand img {
-            height: 48px;
+            height: 45px;
             width: auto;
-            margin-right: 12px;
-        }
-
-        .navbar-brand span {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: 1px;
         }
 
         .navbar-nav .nav-link,
@@ -104,10 +101,11 @@
 </head>
 
 <body>
+    <!-- Single Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <span>ROOTS M&E</span>
+            <a class="navbar-brand d-flex align-items-center" href="{{ route('admin.dashboard') }}">
+                <img src="{{ asset('images/roots-logo.png') }}" alt="ROOTS Logo" style="height: 45px; width: auto;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -121,9 +119,7 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="userMgmtDropdown">
                             <li><a class="dropdown-item" href="{{ url('/admin/add-admin') }}">Add Admin</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{{ url('/admin/add-supervisor') }}">Add Supervisor</a></li>
                             <li><a class="dropdown-item" href="{{ url('/admin/add-finance') }}">Add Finance user</a></li>
                             <li><a class="dropdown-item" href="{{ url('/admin/add-dataentry') }}">Add Data Entry</a></li>
@@ -163,9 +159,7 @@
                             <li><a class="dropdown-item" href="{{ route('admin.project-frequencies') }}">Project Reporting Frequencies</a></li>
                         </ul>
                     </li>
-
                     <!-- Components & Sub-Components -->
-
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="compsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa fa-layer-group"></i> Comp & SubComp
@@ -183,7 +177,7 @@
                         <ul class="dropdown-menu" aria-labelledby="qualityDropdown">
                             <li><a class="dropdown-item" href="{{ url('/admin/indicator-performance') }}">Indicator Performance</a></li>
                             <li><a class="dropdown-item" href="{{ url('/admin/beneficiary-performance') }}">Beneficiary Performance</a></li>
-                            <li><a class="dropdown-item" href="{{ url('/admin/disbursement') }}">Disbursement</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/admin/disbursement-performance') }}">Disbursement Performance</a></li>
                             <li><a class="dropdown-item" href="{{ url('/admin/contract-performance') }}">Contract/MOU Performance</a></li>
                             <li><a class="dropdown-item" href="{{ url('/admin/training-performance') }}">Training Performance</a></li>
                         </ul>
@@ -202,22 +196,24 @@
                         </ul>
                     </li>
                 </ul>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle admin-name" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa fa-user me-1"></i>{{ session('admin_name') ?? 'Admin User' }}
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
-                        <li><a class="dropdown-item" href="{{ url('/admin/profile') }}"><i class="fa fa-user-cog me-2"></i>Profile</a></li>
-                        <li><a class="dropdown-item" href="{{ url('/admin/settings') }}"><i class="fa fa-cog me-2"></i>Settings</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="{{ url('/admin/logout') }}"><i class="fa fa-sign-out-alt me-2"></i>Log out</a></li>
-                    </ul>
-                </li>
+                <!-- User Menu -->
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-user me-1"></i>{{ session('admin_name') ?? 'Admin' }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="fa fa-user-cog me-2"></i>Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fa fa-cog me-2"></i>Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ route('admin.logout') }}"><i class="fa fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
+
     <div class="main-content">
         <h2 class="mb-4">Dashboard</h2>
         <div class="row dashboard-widgets">
@@ -252,7 +248,7 @@
         </div>
         <!-- Add more dashboard content here -->
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

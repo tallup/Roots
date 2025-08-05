@@ -102,7 +102,7 @@
     </style>
 </head>
 <body>
-    @include('admin.partials.navbar')
+    @include('dataentry.partials.navbar')
 
     <!-- Main Content -->
     <div class="main-content">

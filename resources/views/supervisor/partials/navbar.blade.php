@@ -36,8 +36,8 @@
 </style>
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{{ route('supervisor.dashboard') }}">
-            <i class="fa fa-database me-2"></i>ROOTS SUPERVISOR
+        <a class="navbar-brand d-flex align-items-center" href="{{ route('supervisor.dashboard') }}">
+            <img src="{{ asset('images/roots-logo.png') }}" alt="ROOTS Logo" style="height: 45px; width: auto;">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>

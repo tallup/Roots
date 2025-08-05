@@ -12,7 +12,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Amaranth:wght@400;700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="/images/roots-logo.png" type="image/png">
+    <!-- Favicon -->
+    <link rel="icon" href="{{ asset('images/roots-logo.png') }}" type="image/png">
+    <link rel="shortcut icon" href="{{ asset('images/roots-logo.png') }}" type="image/png">
 
     <style>
         :root {

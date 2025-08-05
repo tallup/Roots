@@ -59,7 +59,7 @@
     </style>
 </head>
 <body>
-    @include('admin.partials.navbar')
+    @include('dataentry.partials.navbar')
     <div class="main-content">
         <div class="container mt-5">
             <div class="form-card mx-auto" style="max-width: 1000px;">

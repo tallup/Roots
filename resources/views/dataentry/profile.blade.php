@@ -34,7 +34,7 @@
     </style>
 </head>
 <body>
-    @include('admin.partials.navbar')
+    @include('dataentry.partials.navbar')
     <div class="main-content">
         <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
             <div class="card shadow-lg border-0" style="max-width: 600px; width: 100%; padding: 2.5rem 2.5rem 2rem 2.5rem; border-radius: 2rem;">

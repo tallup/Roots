@@ -5,7 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ROOTS Admin - Login</title>
-
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{{ asset('images/roots-logo.png') }}" type="image/png">
+    <link rel="shortcut icon" href="{{ asset('images/roots-logo.png') }}" type="image/png">
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -44,21 +48,11 @@
             margin-bottom: 30px;
         }
 
-        .logo-circle {
+        .logo-container img {
             width: 80px;
             height: 80px;
-            border: 3px solid var(--primary-color);
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            object-fit: contain;
             margin-bottom: 15px;
-            background: white;
-        }
-
-        .logo-circle i {
-            font-size: 2rem;
-            color: var(--primary-color);
         }
 
         .system-title {
@@ -131,11 +125,9 @@
 <body>
     <div class="login-container">
         <div class="logo-container">
-            <div class="logo-circle" style="padding: 0; background: white;">
-                <img src="/images/roots-logo.png" alt="ROOTS Logo" style="width: 70px; height: 70px; object-fit: contain; border-radius: 50%;" />
-            </div>
+            <img src="{{ asset('images/roots-logo.png') }}" alt="ROOTS Logo" style="width: 80px; height: 80px; object-fit: contain;" />
             <h1 class="system-title">ROOTS</h1>
-            <p class="system-subtitle">Admin Login</p>
+            <p class="system-subtitle">Management & Evaluation System</p>
         </div>
 
         @if ($errors->any())

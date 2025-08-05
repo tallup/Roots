@@ -74,7 +74,7 @@
 </style>
 <div class="finance-sidebar">
     <div class="sidebar-header">
-        <img src="/images/roots-logo.png" alt="Finance Logo">
+        <img src="{{ asset('images/roots-logo.png') }}" alt="Finance Logo">
         <div class="name-caret">{{ session('finance_name') ?? 'Finance User' }}</div>
         <div style="font-size:0.95rem; color:#e0f7fa;">Finance Users</div>
         <div class="d-flex justify-content-center align-items-center gap-3 mt-3 mb-4">
